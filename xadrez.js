@@ -217,32 +217,61 @@ var historico_movimentos = new HistoricoMovimentos();
                      */
                     let pecaAnalisada = pecas[pecaClicada.dataset.indexNumber];
                     let movimentoPermitido = false;
-                    if (pecaAnalisada.tipo = "peao") {
-                        pecaMovimentada.push(pecaClicada);
-                        linhaOrigem.push(pecas[pecaClicada.dataset.indexNumber].linha);
-                        colunaOrigem.push(pecas[pecaClicada.dataset.indexNumber].coluna);
-                        linhaDestino.push(event.target.dataset.line);
-                        colunaDestino.push(event.target.dataset.column);
-                        pecaAnalisada.linha = event.target.dataset.line;
-                        movimentoPermitido = true;
-                    }
-                    /** 
-                     * linha de codigo para validação do bispo
-                    */
-                    if (pecaAnalisada.tipo == "bispo") {
+
+                    if(pecaAnalisada.tipo === "peao"){
                         let linhaOrigem = parseInt(pecaAnalisada.linha);
                         let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
                         let linhaDestino = parseInt(event.target.dataset.line);
                         let colunaDestino = colunas.indexOf(event.target.dataset.column);
+                        
+                        if (pecaAnalisada.cor === cor2)
+                            if (linhaDestino > linhaOrigem && colunaDestino === colunaOrigem) {
+                            // Verifica se o peão está se movendo exatamente duas casas para frente e se não se moveu antes
+                                if (linhaDestino - linhaOrigem === 2 && linhaOrigem === 2 ) {
+                                movimentoPermitido = true;
+                                // Atualiza as coordenadas da peça
+                                pecaAnalisada.linha = linhas[linhaDestino];
+                                pecaAnalisada.coluna = colunas[colunaDestino];
+                                } else if (linhaDestino - linhaOrigem === 1) {
+                                // Se estiver se movendo apenas uma casa para frente, permita o movimento
+                                movimentoPermitido = true;
+                                // Atualiza as coordenadas da peça
+                                pecaAnalisada.linha = linhas[linhaDestino];
+                                pecaAnalisada.coluna = colunas[colunaDestino];
+                            } } 
+                            else if (pecaAnalisada.cor === cor1 ){
+                                if (linhaDestino - linhaOrigem === 2 && linhaOrigem === 7) {
+                                    movimentoPermitido = true;
+                                    pecaAnalisada.linha = linhas[linhaDestino];
+                                    pecaAnalisada.coluna = colunas[colunaDestino];
+                                } else if (linhaDestino - linhaOrigem === 1) {
+                                    // Se estiver se movendo apenas uma casa para frente, permita o movimento
+                                    movimentoPermitido = true;
+                                    // Atualiza as coordenadas da peça
+                                    pecaAnalisada.linha = linhas[linhaDestino];
+                                    pecaAnalisada.coluna = colunas[colunaDestino];
+                                }
+                        }
+                }
+                    /** 
+                     * linha de codigo para validação do bispo
+                    */
+                        if (pecaAnalisada.tipo === "bispo") {
+                            let linhaOrigem = parseInt(pecaAnalisada.linha);
+                            let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
+                            let linhaDestino = parseInt(event.target.dataset.line);
+                            let colunaDestino = colunas.indexOf(event.target.dataset.column);
 
                         // Verifica se o movimento é diagonal
-                        if (Math.abs(linhaDestino - linhaOrigem) === Math.abs(colunaDestino - colunaOrigem)) {
-                            
-                            movimentoPermitido = true;
-                        }
-                
+                                if (Math.abs(linhaDestino - linhaOrigem) === Math.abs(colunaDestino - colunaOrigem)) {
+
+                                    pecaAnalisada.linha = linhas[linhaDestino];
+                                    pecaAnalisada.coluna = colunas[colunaDestino];
+                                    movimentoPermitido = true;
+                                    }
+                                
                     }
-                    if (pecaAnalisada.tipo == "cavalo") {
+                    if (pecaAnalisada.tipo === "cavalo") {
                         let linhaOrigem = parseInt(pecaAnalisada.linha);
                         let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
                         let linhaDestino = parseInt(event.target.dataset.line);
@@ -251,14 +280,13 @@ var historico_movimentos = new HistoricoMovimentos();
                             
 
                         if ((Math.abs(linhaDestino - linhaOrigem) == 2 && Math.abs(colunaDestino - colunaOrigem) == 1)) {
-                            
                             movimentoPermitido = true;
                         }
                         else if ((Math.abs(linhaDestino - linhaOrigem) == 1 && Math.abs(colunaDestino - colunaOrigem) == 2)) {
                             movimentoPermitido= true;
                         }
                     }
-                    if (pecaAnalisada.tipo == "torre") {
+                    if (pecaAnalisada.tipo === "torre") {
                         let linhaOrigem = parseInt(pecaAnalisada.linha);
                         let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
                         let linhaDestino = parseInt(event.target.dataset.line);
@@ -267,12 +295,13 @@ var historico_movimentos = new HistoricoMovimentos();
                         if(Math.abs(linhaDestino + linhaOrigem || linhaDestino - linhaOrigem) && colunaDestino == colunaOrigem ||
                            linhaDestino == linhaOrigem && Math.abs(colunaDestino + colunaOrigem || colunaDestino - colunaOrigem) ) {
                             
-                            
-                        movimentoPermitido = true;
+                            pecaAnalisada.linha = linhas[linhaDestino];
+                            pecaAnalisada.coluna = colunas[colunaDestino];    
+                            movimentoPermitido = true;
                     }
                        
                     }
-                    if (pecaAnalisada.tipo == "rainha") {
+                    if (pecaAnalisada.tipo === "rainha") {
                         let linhaOrigem = parseInt(pecaAnalisada.linha);
                         let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
                         let linhaDestino = parseInt(event.target.dataset.line);
@@ -287,14 +316,20 @@ var historico_movimentos = new HistoricoMovimentos();
                     }
                        
                     }
-                    if (pecaAnalisada.tipo = "rei") {
+                    if (pecaAnalisada.tipo === "rei") {
                         let linhaOrigem = parseInt(pecaAnalisada.linha);
                         let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
                         let linhaDestino = parseInt(event.target.dataset.line);
                         let colunaDestino = colunas.indexOf(event.target.dataset.line);
 
-                        if(Math.abs(linhaDestino == linhaOrigem) <= 1 && Math.abs(colunaDestino - colunaOrigem) <= 1 ) {
-                            movimentoPermitido = true;
+                
+                        if(Math.abs(linhaDestino - linhaOrigem) <= 1 ||
+                         Math.abs(colunaDestino - colunaOrigem) <= 1) {
+                      
+
+                        movimentoPermitido = true;
+                        pecaAnalisada.linha = linhas[linhaDestino];
+                        pecaAnalisada.coluna = colunas[colunaDestino];
                         }
                     }
 
