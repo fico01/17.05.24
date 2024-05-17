@@ -217,7 +217,7 @@ var historico_movimentos = new HistoricoMovimentos();
                      */
                     let pecaAnalisada = pecas[pecaClicada.dataset.indexNumber];
                     let movimentoPermitido = false;
-                    if (pecaAnalisada.linha < event.target.dataset.line && pecaAnalisada.coluna == event.target.dataset.column && pecaAnalisada.tipo == "peao" && pecaAnalisada.cor == cor2 ) {
+                    if (pecaAnalisada.tipo = "peao") {
                         pecaMovimentada.push(pecaClicada);
                         linhaOrigem.push(pecas[pecaClicada.dataset.indexNumber].linha);
                         colunaOrigem.push(pecas[pecaClicada.dataset.indexNumber].coluna);
@@ -251,25 +251,54 @@ var historico_movimentos = new HistoricoMovimentos();
                             
 
                         if ((Math.abs(linhaDestino - linhaOrigem) == 2 && Math.abs(colunaDestino - colunaOrigem) == 1)) {
+                            
                             movimentoPermitido = true;
                         }
                         else if ((Math.abs(linhaDestino - linhaOrigem) == 1 && Math.abs(colunaDestino - colunaOrigem) == 2)) {
                             movimentoPermitido= true;
                         }
-                        
-                        
-                       
-                        /* 
-                        possivel(x-1,y-2);
-		                possivel(x+1,y+2);
-		                possivel(x+1,y-2);
-		                possivel(x-1,y+2);
-		                possivel(x-2,y-1);
-		                possivel(x+2,y+1);
-		                possivel(x+2,y-1);
-		                possivel(x-2,y+1);
-                        */ 
                     }
+                    if (pecaAnalisada.tipo == "torre") {
+                        let linhaOrigem = parseInt(pecaAnalisada.linha);
+                        let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
+                        let linhaDestino = parseInt(event.target.dataset.line);
+                        let colunaDestino = colunas.indexOf(event.target.dataset.column);
+                        
+                        if(Math.abs(linhaDestino + linhaOrigem || linhaDestino - linhaOrigem) && colunaDestino == colunaOrigem ||
+                           linhaDestino == linhaOrigem && Math.abs(colunaDestino + colunaOrigem || colunaDestino - colunaOrigem) ) {
+                            
+                            
+                        movimentoPermitido = true;
+                    }
+                       
+                    }
+                    if (pecaAnalisada.tipo == "rainha") {
+                        let linhaOrigem = parseInt(pecaAnalisada.linha);
+                        let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
+                        let linhaDestino = parseInt(event.target.dataset.line);
+                        let colunaDestino = colunas.indexOf(event.target.dataset.column);
+                        
+                        if(Math.abs(linhaDestino + linhaOrigem || linhaDestino - linhaOrigem) && colunaDestino == colunaOrigem ||
+                           linhaDestino == linhaOrigem && Math.abs(colunaDestino + colunaOrigem || colunaDestino - colunaOrigem) ||
+                           Math.abs(linhaDestino - linhaOrigem) === Math.abs(colunaDestino - colunaOrigem) ) {
+                            
+                            
+                        movimentoPermitido = true;
+                    }
+                       
+                    }
+                    if (pecaAnalisada.tipo = "rei") {
+                        let linhaOrigem = parseInt(pecaAnalisada.linha);
+                        let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
+                        let linhaDestino = parseInt(event.target.dataset.line);
+                        let colunaDestino = colunas.indexOf(event.target.dataset.line);
+
+                        if(Math.abs(linhaDestino == linhaOrigem) <= 1 && Math.abs(colunaDestino - colunaOrigem) <= 1 ) {
+                            movimentoPermitido = true;
+                        }
+                    }
+
+
                    
                     /**
                      * A estrutura de validação abaixo verifica se o movimento está autorizado e executa as linhas de código do bloco if{}
