@@ -239,7 +239,7 @@ var historico_movimentos = new HistoricoMovimentos();
                                 pecaAnalisada.linha = linhas[linhaDestino];
                                 pecaAnalisada.coluna = colunas[colunaDestino];
                             } } 
-                            else if (pecaAnalisada.cor === cor1 ){
+                            else if (pecaAnalisada.cor === cor1 ){           /* n ta funcionando ainda */
                                 if (linhaDestino - linhaOrigem === 2 && linhaOrigem === 7) {
                                     movimentoPermitido = true;
                                     pecaAnalisada.linha = linhas[linhaDestino];
