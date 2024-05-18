@@ -214,138 +214,100 @@ var historico_movimentos = new HistoricoMovimentos();
                 if (event.target.tagName == "DIV" || event.target.tagName == "div") {
                     if (event.target.innerHTML == "") {
                         let targetCell = event.target;
-    let targetCellLine = parseInt(targetCell.dataset.line);
-    let targetCellColumn = colunas.indexOf(targetCell.dataset.column);
-    
-    let pecaAnalisada = pecas[pecaClicada.dataset.indexNumber];
-    let linhaOrigem = parseInt(pecaAnalisada.linha);
-    let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
-    let linhaDestino = targetCellLine;
-    let colunaDestino = targetCellColumn;
-    let movimentoPermitido = false;
+                        let targetCellLine = targetCell.dataset.line;
+                        let targetCellColumn = targetCell.dataset.column;
+                        
+                        let pecaAnalisada = pecas[pecaClicada.dataset.indexNumber];
+                        let linhaOrigem = parseInt(pecaAnalisada.linha);
+                        let colunaOrigem = colunas.indexOf(pecaAnalisada.coluna);
+                        let linhaDestino = parseInt(targetCellLine);
+                        let colunaDestino = colunas.indexOf(targetCellColumn);
+                        let movimentoPermitido = false;
+                    
 
-    // Lógica de movimento para peões
-    if (pecaAnalisada.tipo === "peao") {
-        let direction = (pecaAnalisada.cor === cor1) ? -1 : 1; // Define a direção com base na cor
-        let startRow = (pecaAnalisada.cor === cor1) ? 6 : 1;
+                        if (pecaAnalisada.tipo === "peao") {
+                       
 
-        // Movimento para frente
-        if ((linhaDestino === linhaOrigem + direction && colunaDestino === colunaOrigem && !targetCell.firstChild) ||
-            (linhaDestino === linhaOrigem + direction * 2 && colunaDestino === colunaOrigem && linhaOrigem === startRow && !targetCell.firstChild)) {
-            movimentoPermitido = true;
-        }
+                            if (pecaAnalisada.cor === cor2) { // Movimento do peão preto
+                                if ((linhaDestino - linhaOrigem === 1 && colunaDestino === colunaOrigem && !targetCell.firstChild) ||
+                                    (linhaDestino - linhaOrigem === 1 && Math.abs(colunaDestino - colunaOrigem) === 1 && targetCell.firstChild && targetCell.firstChild.dataset.cor !== pecaAnalisada.cor)) {
+                                    movimentoPermitido = true; // Movimento para frente ou captura diagonal
+                                }
+                            } else { // Movimento do peão branco
+                                if ((linhaOrigem - linhaDestino === 1 && colunaDestino === colunaOrigem && !targetCell.firstChild) ||
+                                    (linhaOrigem - linhaDestino === 1 && Math.abs(colunaDestino - colunaOrigem) === 1 && targetCell.firstChild && targetCell.firstChild.dataset.cor !== pecaAnalisada.cor)) {
+                                    movimentoPermitido = true; // Movimento para frente ou captura diagonal
+                                }
+                            }
+                        }
+                    /** 
+                     * linha de codigo para validação do bispo
+                    */
+                        if (pecaAnalisada.tipo === "bispo") {
+                        // Verifica se o movimento é diagonal
+                            if (Math.abs(linhaDestino - linhaOrigem) === Math.abs(colunaDestino - colunaOrigem)) {
+                                    pecaAnalisada.linha = linhas[linhaDestino];
+                                    pecaAnalisada.coluna = colunas[colunaDestino];
+                                    movimentoPermitido = true;
+                            }     
+                        }
+                        if (pecaAnalisada.tipo === "cavalo") {
+                            if ((Math.abs(linhaDestino - linhaOrigem) == 2 && Math.abs(colunaDestino - colunaOrigem) == 1)) {
+                                    movimentoPermitido = true;
+                            }else if ((Math.abs(linhaDestino - linhaOrigem) == 1 && Math.abs(colunaDestino - colunaOrigem) == 2)) {
+                                    movimentoPermitido= true;
+                        }
+                        }
+                        if (pecaAnalisada.tipo === "torre") {
+                            if(Math.abs(linhaDestino + linhaOrigem || linhaDestino - linhaOrigem) && colunaDestino == colunaOrigem ||
+                                    linhaDestino == linhaOrigem && Math.abs(colunaDestino + colunaOrigem || colunaDestino - colunaOrigem) ) {
+                            
+                                    pecaAnalisada.linha = linhas[linhaDestino];
+                                    pecaAnalisada.coluna = colunas[colunaDestino];    
+                                    movimentoPermitido = true;
+                            }
+                       
+                        }
+                        if (pecaAnalisada.tipo === "rainha") {
+                            if(Math.abs(linhaDestino + linhaOrigem || linhaDestino - linhaOrigem) && colunaDestino == colunaOrigem ||
+                                    linhaDestino == linhaOrigem && Math.abs(colunaDestino + colunaOrigem || colunaDestino - colunaOrigem) ||
+                                    Math.abs(linhaDestino - linhaOrigem) === Math.abs(colunaDestino - colunaOrigem) ) {  
+                                    movimentoPermitido = true;
+                        }
+                       
+                        }
+                        if (pecaAnalisada.tipo === "rei") {                
+                            if(Math.abs(linhaDestino - linhaOrigem) <= 1 ||
+                                    Math.abs(colunaDestino - colunaOrigem) <= 1) {                     
+                                    movimentoPermitido = true;
+                                    pecaAnalisada.linha = linhas[linhaDestino];
+                                    pecaAnalisada.coluna = colunas[colunaDestino];
+                            }
+                        }
 
-        // Captura diagonal
-        if (linhaDestino === linhaOrigem + direction && Math.abs(colunaDestino - colunaOrigem) === 1 && targetCell.firstChild && targetCell.firstChild.dataset.cor !== pecaAnalisada.cor) {
-            movimentoPermitido = true;
-        }
-    }
+                        if (movimentoPermitido) {
+                            if (targetCell.firstChild) {
+                                    let pecaExistente = pecas[targetCell.firstChild.dataset.indexNumber];
+                                    if (pecaExistente.cor !== pecaAnalisada.cor) {
+                                        targetCell.removeChild(targetCell.firstChild); // Captura a peça
+                                    } else {
+                                        console.log("Movimento não permitido. Peça da mesma cor.");
+                                        return;
+                                    }
+                            }
+            
 
-    // Lógica de movimento para bispos
-    if (pecaAnalisada.tipo === "bispo") {
-        if (Math.abs(linhaDestino - linhaOrigem) === Math.abs(colunaDestino - colunaOrigem)) {
-            movimentoPermitido = true;
-            // Verifique se o caminho está livre
-            for (let i = 1; i < Math.abs(linhaDestino - linhaOrigem); i++) {
-                if (document.querySelector(`[data-line="${linhaOrigem + i * Math.sign(linhaDestino - linhaOrigem)}"][data-column="${colunas[colunaOrigem + i * Math.sign(colunaDestino - colunaOrigem)]}"]`).firstChild) {
-                    movimentoPermitido = false;
-                    break;
-                }
-            }
-        }
-    }
+                            pecaAnalisada.linha = targetCellLine;
+                            pecaAnalisada.coluna = targetCellColumn;
+                            let pecaClicadaTemp = pecaClicada;
+                            pecaClicada.remove();
+                            targetCell.appendChild(pecaClicadaTemp);
+                        } else {
+                            console.log("Movimento não permitido.");
+                        }
 
-    // Lógica de movimento para cavalos
-    if (pecaAnalisada.tipo === "cavalo") {
-        if ((Math.abs(linhaDestino - linhaOrigem) === 2 && Math.abs(colunaDestino - colunaOrigem) === 1) ||
-            (Math.abs(linhaDestino - linhaOrigem) === 1 && Math.abs(colunaDestino - colunaOrigem) === 2)) {
-            movimentoPermitido = true;
-        }
-    }
-
-    // Lógica de movimento para torres
-    if (pecaAnalisada.tipo === "torre") {
-        if (linhaDestino === linhaOrigem || colunaDestino === colunaOrigem) {
-            movimentoPermitido = true;
-            // Verifique se o caminho está livre
-            if (linhaDestino === linhaOrigem) {
-                for (let i = 1; i < Math.abs(colunaDestino - colunaOrigem); i++) {
-                    if (document.querySelector(`[data-line="${linhaOrigem}"][data-column="${colunas[colunaOrigem + i * Math.sign(colunaDestino - colunaOrigem)]}"]`).firstChild) {
-                        movimentoPermitido = false;
-                        break;
-                    }
-                }
-            } else {
-                for (let i = 1; i < Math.abs(linhaDestino - linhaOrigem); i++) {
-                    if (document.querySelector(`[data-line="${linhaOrigem + i * Math.sign(linhaDestino - linhaOrigem)}"][data-column="${colunas[colunaOrigem]}"]`).firstChild) {
-                        movimentoPermitido = false;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    // Lógica de movimento para rainhas
-    if (pecaAnalisada.tipo === "rainha") {
-        if ((linhaDestino === linhaOrigem || colunaDestino === colunaOrigem) || 
-            (Math.abs(linhaDestino - linhaOrigem) === Math.abs(colunaDestino - colunaOrigem))) {
-            movimentoPermitido = true;
-            // Verifique se o caminho está livre para movimentos diagonais
-            if (Math.abs(linhaDestino - linhaOrigem) === Math.abs(colunaDestino - colunaOrigem)) {
-                for (let i = 1; i < Math.abs(linhaDestino - linhaOrigem); i++) {
-                    if (document.querySelector(`[data-line="${linhaOrigem + i * Math.sign(linhaDestino - linhaOrigem)}"][data-column="${colunas[colunaOrigem + i * Math.sign(colunaDestino - colunaOrigem)]}"]`).firstChild) {
-                        movimentoPermitido = false;
-                        break;
-                    }
-                }
-            }
-            // Verifique se o caminho está livre para movimentos verticais e horizontais
-            if (linhaDestino === linhaOrigem) {
-                for (let i = 1; i < Math.abs(colunaDestino - colunaOrigem); i++) {
-                    if (document.querySelector(`[data-line="${linhaOrigem}"][data-column="${colunas[colunaOrigem + i * Math.sign(colunaDestino - colunaOrigem)]}"]`).firstChild) {
-                        movimentoPermitido = false;
-                        break;
-                    }
-                }
-            } else if (colunaDestino === colunaOrigem) {
-                for (let i = 1; i < Math.abs(linhaDestino - linhaOrigem); i++) {
-                    if (document.querySelector(`[data-line="${linhaOrigem + i * Math.sign(linhaDestino - linhaOrigem)}"][data-column="${colunas[colunaOrigem]}"]`).firstChild) {
-                        movimentoPermitido = false;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    // Lógica de movimento para reis
-    if (pecaAnalisada.tipo === "rei") {
-        if (Math.abs(linhaDestino - linhaOrigem) <= 1 && Math.abs(colunaDestino - colunaOrigem) <= 1) {
-            movimentoPermitido = true;
-        }
-    }
-
-    if (movimentoPermitido) {
-        if (targetCell.firstChild) {
-            let pecaExistente = pecas[targetCell.firstChild.dataset.indexNumber];
-            if (pecaExistente.cor !== pecaAnalisada.cor) {
-                targetCell.removeChild(targetCell.firstChild); // Captura a peça
-            } else {
-                console.log("Movimento não permitido. Peça da mesma cor.");
-                return;
-            }
-        }
-
-        pecaAnalisada.linha = linhas[linhaDestino];
-        pecaAnalisada.coluna = colunas[colunaDestino];
-        let pecaClicadaTemp = pecaClicada;
-        pecaClicada.remove();
-        targetCell.appendChild(pecaClicadaTemp);
-    } else {
-        console.log("Movimento não permitido.");
-    }
-
+                    } else {
+                    console.log("Ops! Não é possível realizar este movimento, pois o quadrante " + event.target.id + " já está ocupado.");
                     }
             }
         }
