@@ -225,21 +225,12 @@ var historico_movimentos = new HistoricoMovimentos();
                         let movimentoPermitido = false;
                     
 
-                        if (pecaAnalisada.tipo === "peao") {
-                       
-
-                            if (pecaAnalisada.cor === cor2) { // Movimento do peão preto
-                                if ((linhaDestino - linhaOrigem === 1 && colunaDestino === colunaOrigem && !targetCell.firstChild) ||
-                                    (linhaDestino - linhaOrigem === 1 && Math.abs(colunaDestino - colunaOrigem) === 1 && targetCell.firstChild && targetCell.firstChild.dataset.cor !== pecaAnalisada.cor)) {
-                                    movimentoPermitido = true; // Movimento para frente ou captura diagonal
-                                }
-                            } else { // Movimento do peão branco
-                                if ((linhaOrigem - linhaDestino === 1 && colunaDestino === colunaOrigem && !targetCell.firstChild) ||
-                                    (linhaOrigem - linhaDestino === 1 && Math.abs(colunaDestino - colunaOrigem) === 1 && targetCell.firstChild && targetCell.firstChild.dataset.cor !== pecaAnalisada.cor)) {
-                                    movimentoPermitido = true; // Movimento para frente ou captura diagonal
-                                }
-                            }
-                        }
+                         if(pecaAnalisada.tipo === "peao"){
+                        
+                       if(Math.abs(linhaDestino - linhaOrigem) == 1 && colunaDestino === colunaOrigem || Math.abs(linhaDestino - linhaOrigem) == 2 && linhaOrigem == 2  || linhaOrigem == 7){
+                        movimentoPermitido = true;
+                       }
+                }
                     /** 
                      * linha de codigo para validação do bispo
                     */
